@@ -1,0 +1,1 @@
+console.log("Tugas 1");

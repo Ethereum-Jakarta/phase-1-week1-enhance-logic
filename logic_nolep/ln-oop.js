@@ -1,111 +1,99 @@
 class Bank {
   constructor(bankName) {
     this.bankName = bankName;
+    this.bankMembers = [];
   }
 
-  register(person, memberType, nominal) {
-    const id = generateId();
-    if (memberType === "platinum") {
-      if (nominal >= Platinum.minimumBalance) {
-        person.bankAccount = new Platinum(person, id, nominal);;
+  register(person, type, initialDeposit) {
+    if (type === "platinum") {
+      const account = new Platinum(person.name, initialDeposit);
+      if (account.balance >= account.minimumBalance) {
+        person.bankAccount = account;
         console.log(
-          `Selamat datang ke ${this.bankName}, ${person.name}. Nomor Akun anda adalah ${id}. Total saldo adalah ${person.bankAccount.balance}`
+          `Selamat datang ke ${this.bankName}, ${person.name}. Nomor Akun anda adalah ${account.accountNumber}. Total saldo adalah ${account.balance}`
         );
-      } else
+      } else {
         console.log("Saldo awal kurang dari minimum saldo yang ditentukan");
-    } else if (memberType === "silver") {
-      if (nominal >= Silver.minimumBalance) {
-        person.bankAccount = new Silver(person, id, nominal);
+      }
+    } else if (type === "silver") {
+      const account = new Silver(person.name, initialDeposit);
+      if (account.balance >= account.minimumBalance) {
+        person.bankAccount = account;
         console.log(
-          `Selamat datang ke ${this.bankName}, ${person.name}. Nomor Akun anda adalah ${id}. Total saldo adalah ${person.bankAccount.balance}`
+          `Selamat datang ke ${this.bankName}, ${person.name}. Nomor Akun anda adalah ${account.accountNumber}. Total saldo adalah ${account.balance}`
         );
-      } else
+      } else {
         console.log("Saldo awal kurang dari minimum saldo yang ditentukan");
-    } else console.log("Type member tidak tersedia");
+      }
+    }
   }
 }
 
 class Person {
   constructor(name) {
     this.name = name;
-    this.bankAccount = null;
   }
 }
 
 class Member {
-  constructor(person, accountNumber, nominal) {
-    this.memberName = person.name;
-    this.accountNumber = accountNumber;
-    this.minimumBalance = 0;
-    this.balance = nominal;
+  constructor(memberName, initialDeposit) {
+    this.memberName = memberName;
+    this.balance = initialDeposit;
+    this.accountNumber = Math.floor(Math.random() * 9000000) + 1000000;
     this.transactions = [];
   }
 
   credit(nominal) {
-    if (nominal < 50000) {
-      console.log("Belum memenuhi minimal uang yang dapat disetor");
-      return;
-    }
-    this.balance += nominal;
-    this.transactions.push(new Transaction(nominal, "credit", "nyetor"));
-    console.log("Anda sukses menyimpan uang ke dalam bank");
+    if (nominal >= this.minimumBalance) {
+      this.balance += nominal;
+      const transc = new Transaction(nominal, "credit", "nyetor");
+      this.transactions.push(transc);
+      console.log("Anda sukses menyimpan uang ke dalam bank");
+    } else console.log("Belum memenuhi minimal uang yang dapat di setor");
   }
 
   debet(nominal, note) {
-    if (nominal > this.balance) {
-      console.info("Saldo anda tidak cukup");
-    } else if (this.balance - nominal < 50000) {
-      console.info(
-        "Saldo minimum anda tidak terpenuhi untuk melakukan transaksi"
-      );
-    } else {
+    if (nominal > this.balance) console.log("Saldo anda tidak cukup");
+    else if (this.balance - nominal < this.minimumBalance){
+      console.log("Saldo minimum anda tidak terpenuhi untuk melakukan transaksi.")
+    }else {
       this.balance -= nominal;
-      this.transactions.push(new Transaction(nominal, "debet", note));
+      const transc = new Transaction(nominal, "debet", note);
+      this.transactions.push(transc);
       console.log("Anda sukses menarik uang dari bank");
     }
   }
 
-  transfer(target, nominal) {
-    if (nominal > this.balance || this.balance - nominal < 50000) {
-      console.log(`Anda gagal transfer ke ${target.memberName}`);
-      return;
+  transfer(bankAccount, nominal){
+    if (nominal > this.balance) console.log("Saldo anda tidak cukup");
+    else if (this.balance - nominal < this.minimumBalance){
+      console.log("Anda gagal transfer ke Semmi Verian")
+    }else {
+      this.balance -= nominal;
+      bankAccount.balance += nominal;
+      const transc = new Transaction(nominal, "transfer", `transfer ke akun ${bankAccount.memberName}`);
+      const tf = new Transaction(nominal, "credit", `transfer dari akun ${this.memberName}`)
+      this.transactions.push(transc);
+      bankAccount.transactions.push(tf);
+      console.log(`Anda sukses transfer ke ${bankAccount.memberName}`);
     }
-    this.balance -= nominal;
-    target.balance += nominal;
-
-    this.transactions.push(
-      new Transaction(nominal, "debet", `transfer ke akun ${target.memberName}`)
-    );
-    target.transactions.push(
-      new Transaction(
-        nominal,
-        "credit",
-        `transfer dari akun ${this.memberName}`
-      )
-    );
-
-    console.log(`Anda sukses transfer ke ${target.memberName}`);
   }
 }
 
 class Platinum extends Member {
-  constructor(person, accountNumber, nominal) {
-    super(person, accountNumber, nominal);
-    this.minimumBalance = Platinum.minimumBalance;
+  constructor(memberName, initialDeposit) {
+    super(memberName, initialDeposit);
+    this.minimumBalance = 50000;
     this.type = "platinum";
   }
-
-  static minimumBalance = 50000;
 }
 
 class Silver extends Member {
-  constructor(person, accountNumber, nominal) {
-    super(person, accountNumber, nominal);
-    this.minimumBalance = Silver.minimumBalance;
+  constructor(memberName, initialDeposit) {
+    super(memberName, initialDeposit);
+    this.minimumBalance = 10000;
     this.type = "silver";
   }
-
-  static minimumBalance = 10000;
 }
 
 class Transaction {
@@ -116,9 +104,7 @@ class Transaction {
     this.note = note;
   }
 }
-function generateId() {
-  return Math.floor(Math.random() * 900000) + 100000;
-}
+
 
 // TESTCASE
 // TIDAK BOLEH MENGUBAH CODE DI BAWAH INI

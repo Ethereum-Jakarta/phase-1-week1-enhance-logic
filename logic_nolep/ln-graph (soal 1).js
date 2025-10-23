@@ -13,7 +13,6 @@ function shortestPath(friends, start, target) {
         visited.add(neighbor);
         queue.push([neighbor, distance+1]);
       }
-      
     });
   } return -1;
 }

@@ -33,8 +33,26 @@ function shortestPath(friends, start, target) {
   //code
   if (start == target) return 0;
 
-  const queue = [];
-  queue = [start, 0]
+  let queue = [];
+  queue = [start]
+  const visited = {[start]: 0}
+
+  while(queue.length > 0) {
+    const current = queue.shift();
+    const currentDistance = visited[current];
+
+    for(const neighbor of friends[current]) {
+      if(!(neighbor in visited)) {
+        visited[neighbor] = currentDistance + 1;
+        if(neighbor === target) {
+          return visited[neighbor]
+        }
+        queue.push(neighbor)
+      }
+
+    }
+  }
+  return -1
 }
 
 // Testcase 1

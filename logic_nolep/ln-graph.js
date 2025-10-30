@@ -147,65 +147,139 @@ function shortestPath(friends, start, target) {
 // Tuliskan sebuah fungsi yang mengambil input berupa matriks grid dan mengembalikan jumlah pulau yang ada.
 
 // ```js
-// class Graph {
-//   // Implementasi graph dan metode DFS
-// }
+class Graph {
+  constructor(grid) {
+    this.grid = grid;
+    
+    this.totalRow = grid.length;
+    this.totalColumn = grid[0].length;
+    
+    this.checked = [];
+    for (let i = 0; i < this.totalRow; i++) {
+      let newRow = [];
+      for (let j = 0; j < this.totalColumn; j++) {
+        newRow.push(false);
+      }
+      this.checked.push(newRow);
+    }
+  }
+  
+  walkAroundGrid(row, column) {
+    let outOfGrid = row < 0 || 
+                         row >= this.totalRow || 
+                         column < 0 || 
+                         column >= this.totalColumn;
+    
+    if (outOfGrid) {
+      return;
+    }
+    
+    if (this.checked[row][column] === true) {
+      return;
+    }
+    
+    if (this.grid[row][column] === 0) {
+      return;
+    }
+    
+    this.checked[row][column] = true;
+    
+    this.walkAroundGrid(row - 1, column);
+    
+    this.walkAroundGrid(row + 1, column);
+    
+    this.walkAroundGrid(row, column - 1);
+    
+    this.walkAroundGrid(row, column + 1);
+  }
+  
+  countTotalGrid() {
+    let totalIsland = 0;
+    
+    for (let row = 0; row < this.totalRow; row++) {
+      for (let column = 0; column < this.totalColumn; column++) {
+        
+        let grids = this.grid[row][column];
+        
+        let island = grids === 1;
+        
+        let unchecked = this.checked[row][column] === false;
+        
+        if (island && unchecked) {
+          totalIsland = totalIsland + 1;
+          
+          this.walkAroundGrid(row, column);
+        }
+      }
+    }
+    
+    return totalIsland;
+  }
+}
 
-// function islandCount(grid) {
-//   // Implementasi DFS untuk menghitung jumlah pulau
-// }
+function islandCount(grid) {
+  if (grid.length === 0) {
+    return 0;
+  }
+  
+  let gridMap = new Graph(grid);
+  
+  let result = gridMap.countTotalGrid();
+  
+  return result;
+}
 
-// // Testcase 1
-// console.log(islandCount([
-//   [1, 1, 1, 1, 0],
-//   [1, 1, 0, 1, 0],
-//   [1, 1, 0, 0, 0],
-//   [0, 0, 0, 0, 0]
-// ])); // Expected Output: 1
+// Testcase 1
+console.log(islandCount([
+  [1, 1, 1, 1, 0],
+  [1, 1, 0, 1, 0],
+  [1, 1, 0, 0, 0],
+  [0, 0, 0, 0, 0]
+])); // Expected Output: 1
 
-// // Testcase 2
-// console.log(islandCount([
-//   [1, 1, 0, 0, 0],
-//   [1, 1, 0, 0, 0],
-//   [0, 0, 1, 0, 0],
-//   [0, 0, 0, 1, 1]
-// ])); // Expected Output: 3
+// Testcase 2
+console.log(islandCount([
+  [1, 1, 0, 0, 0],
+  [1, 1, 0, 0, 0],
+  [0, 0, 1, 0, 0],
+  [0, 0, 0, 1, 1]
+])); // Expected Output: 3
 
-// // Testcase 3
-// console.log(islandCount([
-//   [1, 1, 0, 0, 1],
-//   [1, 0, 0, 0, 0],
-//   [0, 0, 1, 0, 0],
-//   [1, 0, 0, 1, 1]
-// ])); // Expected Output: 5
+// Testcase 3
+console.log(islandCount([
+  [1, 1, 0, 0, 1],
+  [1, 0, 0, 0, 0],
+  [0, 0, 1, 0, 0],
+  [1, 0, 0, 1, 1]
+])); // Expected Output: 5
 
-// // Testcase 4
-// console.log(islandCount([
-//   [1, 0, 0, 0],
-//   [0, 1, 0, 1],
-//   [0, 1, 0, 0],
-//   [0, 0, 0, 1]
-// ])); // Expected Output: 4
+// Testcase 4
+console.log(islandCount([
+  [1, 0, 0, 0],
+  [0, 1, 0, 1],
+  [0, 1, 0, 0],
+  [0, 0, 0, 1]
+])); // Expected Output: 4
 
-// // Testcase 5
-// console.log(islandCount([
-//   [1, 1, 0, 1, 0],
-//   [0, 0, 0, 0, 1],
-//   [1, 0, 0, 1, 0],
-//   [0, 1, 0, 0, 0]
-// ])); // Expected Output: 6
+// Testcase 5
+console.log(islandCount([
+  [1, 1, 0, 1, 0],
+  [0, 0, 0, 0, 1],
+  [1, 0, 0, 1, 0],
+  [0, 1, 0, 0, 0]
+])); // Expected Output: 6
 
-// // Testcase 6
-// console.log(islandCount([
-//   [1, 1, 1, 1, 1],
-//   [1, 0, 0, 0, 0],
-//   [1, 0, 1, 1, 0],
-//   [1, 1, 0, 0, 0]
-// ])); // Expected Output: 2
+// Testcase 6
+console.log(islandCount([
+  [1, 1, 1, 1, 1],
+  [1, 0, 0, 0, 0],
+  [1, 0, 1, 1, 0],
+  [1, 1, 0, 0, 0]
+])); // Expected Output: 2
 
-// // Testcase 7
-// console.log(islandCount([
-//   [1, 1, 1],
-//   [0, 0, 0],
-//   [1, 0, 1]
-// ])); // Expected Output: 3
+// Testcase 7
+console.log(islandCount([
+  [1, 1, 1],
+  [0, 0, 0],
+  [1, 0, 1]
+])); // Expected Output: 3

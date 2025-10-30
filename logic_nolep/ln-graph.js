@@ -164,7 +164,7 @@ class Graph {
     }
   }
   
-  walkAroundGrid(row, column) {
+  dfs(row, column) {
     let outOfGrid = row < 0 || 
                          row >= this.totalRow || 
                          column < 0 || 
@@ -184,13 +184,13 @@ class Graph {
     
     this.checked[row][column] = true;
     
-    this.walkAroundGrid(row - 1, column);
+    this.dfs(row - 1, column);
     
-    this.walkAroundGrid(row + 1, column);
+    this.dfs(row + 1, column);
     
-    this.walkAroundGrid(row, column - 1);
+    this.dfs(row, column - 1);
     
-    this.walkAroundGrid(row, column + 1);
+    this.dfs(row, column + 1);
   }
   
   countTotalGrid() {
@@ -208,7 +208,7 @@ class Graph {
         if (island && unchecked) {
           totalIsland = totalIsland + 1;
           
-          this.walkAroundGrid(row, column);
+          this.dfs(row, column);
         }
       }
     }

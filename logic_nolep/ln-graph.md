@@ -189,5 +189,3 @@ console.log(islandCount([
   [1, 0, 1]
 ])); // Expected Output: 3
 ```
-
-

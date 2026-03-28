@@ -2,7 +2,7 @@
 
 `Soal: Mencari Indeks dalam Array yang Terrotasi (searchRotatedArray)`
 
-*Wajib menggunakan binary search*
+_Wajib menggunakan binary search_
 
 Deskripsi: Kalian diberikan sebuah array bilangan bulat nums yang terurut secara menaik (dengan nilai-nilai yang berbeda-beda).
 
@@ -12,8 +12,8 @@ Diberikan array nums setelah rotasi yang mungkin dan sebuah bilangan bulat targe
 
 Kalian harus menulis algoritma dengan kompleksitas waktu O(log n).
 
-
 Contoh 1:
+
 ```
 Input: nums = [4,5,6,7,0,1,2], target = 0
 
@@ -21,14 +21,15 @@ Output: 4
 ```
 
 Contoh 2:
+
 ```
 Input: nums = [4,5,6,7,0,1,2], target = 3
 
 Output: -1
 ```
 
-
 Contoh 3:
+
 ```
 Input: nums = [1], target = 0
 
@@ -43,10 +44,9 @@ Constraints:
 - nums adalah array yang terurut secara menaik - yang kemungkinan telah dirotasi.
 - -104 <= target <= 104
 
-
 ```js
 const searchRotatedArray = (nums, target) => {
-    //code
+  //code
 };
 
 // Test Case

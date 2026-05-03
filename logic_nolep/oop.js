@@ -4,24 +4,26 @@ class Bank {
   }
 
   register(person, type, initialBalance) {
+    const accountNumber = Math.floor(Math.random() * 9000000) + 1000000;
+
     if (type === 'platinum') {
         if (initialBalance < 50000) {
             console.log(`Saldo awal kurang dari minimum saldo yang ditentukan`);
             return;
         }
-        person.bankAccount = new Platinum(person.name, initialBalance);
+        person.bankAccount = new Platinum(person.name, initialBalance, accountNumber);
     } else if (type === 'silver') {
         if (initialBalance < 10000) {
             console.log(`Saldo awal kurang dari minimum saldo yang ditentukan`);
             return;
         }
-        person.bankAccount = new Silver(person.name, initialBalance);
+        person.bankAccount = new Silver(person.name, initialBalance, accountNumber);
     } else {
         console.log(`Tipe member tidak valid`);
         return;
     }
 
-    console.log(`Selamat datang ke ${this.name}, ${person.name}. Nomor akun Anda adalah ${person.bankAccount.accountNumber}. Total saldo adalah ${person.bankAccount.balance}.`);
+    console.log(`Selamat datang ke ${this.name}, ${person.name}. Nomor akun Anda adalah ${accountNumber}. Total saldo adalah ${initialBalance}.`);
   }
 }
 
@@ -33,10 +35,10 @@ class Person {
 }
 
 class Member {
-  constructor(name, initialBalance) {
+  constructor(name, initialBalance, accountNumber) {
     this.memberName = name;
     this.balance = initialBalance;
-    this.accountNumber = Math.floor(Math.random() * 9000000) + 1000000;
+    this.accountNumber = accountNumber;
     this.transactions = [];
   }
 
@@ -78,16 +80,16 @@ class Member {
 }
 
 class Platinum extends Member{
-  constructor(name, initialBalance) {
-    super(name, initialBalance);
+  constructor(name, initialBalance, accountNumber) {
+    super(name, initialBalance, accountNumber);
     this.minimumBalance = 50000;
     this.type = 'platinum';
   }
 }
 
 class Silver extends Member{
-  constructor(name, initialBalance) {
-    super(name, initialBalance);
+  constructor(name, initialBalance, accountNumber) {
+    super(name, initialBalance, accountNumber);
     this.minimumBalance = 10000;
     this.type = 'silver';
   }

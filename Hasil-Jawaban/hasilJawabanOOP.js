@@ -1,25 +1,143 @@
+function generateLuhn7() { // kemarin aku baru belajar cybersecurity wak. Terus my mentor jelasin tentang Luhn Algorithm
+    let data = Math.floor(Math.random() * 900000) + 100000;
+    if (!/^\d{6}$/.test(data)) {
+      throw new Error("Input harus tepat 6 digit.");
+    }
+    let sum = 0;
+    let shouldDouble = true; // karena check digit akan berada di paling kanan
+    for (let i = data.length - 1; i >= 0; i--) {
+      let digit = Number(data[i]);
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+    const checkDigit = (10 - (sum % 10)) % 10;
+    return data + checkDigit;
+}
+
+
 class Bank {
   // Tulis Code Disini
+  constructor(namaBank) {
+    this.namaBank = namaBank;
+  }
+
+  register(nama, type, saldoAwal) {
+    if (type === "platinum") {
+      if (saldoAwal < 50000) {
+        console.log(`Saldo awal kurang dari minimum saldo yang ditentukan`);
+      } else {
+        nama._bankAccount = new Platinum(nama._name, generateLuhn7(), saldoAwal);
+        console.log(`Selamat datang ke ${this.namaBank}, ${nama._name}. Nomor akun anda adalah ${nama._bankAccount.accountNumber}. Total saldo adalah ${nama._bankAccount.balance}`);
+      }
+    } else if (type === "silver"){
+      if (saldoAwal < 10000) {
+        console.log(`Saldo awal kurang dari minimum saldo yang ditentukan`);
+      } else {
+        nama._bankAccount = new Silver(nama._name, generateLuhn7(), saldoAwal);
+        console.log(`Selamat datang ke ${this.namaBank}, ${nama._name}. Nomor akun anda adalah ${nama._bankAccount.accountNumber}. Total saldo adalah ${nama._bankAccount.balance}`);
+      }
+    }
+  }
 }
 
 class Person {
   // Tulis Code Disini
+  constructor(name) {
+    this._name = name;
+    this._bankAccount = null;
+  }
+
+  get name() {
+    return this._name;
+  }
+
+  get bankAccount() {
+    return this._bankAccount;
+  }
 }
 
 class Member {
   // Tulis Code Disini
+  constructor(memberName, accountNumber, minimumBalance, balance) {
+    this.memberName = memberName;
+    this.accountNumber = accountNumber;
+    this.minimumBalace = minimumBalance;
+    this.balance = balance;
+    this.transactions = [];
+  }
+
+  credit(uangMasuk) {
+
+    if (uangMasuk >= 50000) {
+      this.balance += uangMasuk;
+      let transaksiBaru = new Transaction(uangMasuk, "credit", "nyetor");
+      this.transactions.push(transaksiBaru);
+      console.log("Anda sukses menyimpan uang ke dalam bank");
+    } else {
+      console.log("Belum memenuhi minimal uang yang dapat di setor");
+    }
+  }
+
+  debet(nominalDitarik, note) {
+    if (nominalDitarik > this.balance) {
+      console.log("Saldo anda tidak cukup");
+    } else if (this.balance - nominalDitarik < this.minimumBalace) {
+      console.log("Saldo minimum anda tidak terpenuhi untuk melakukan transaksi");
+    } else {
+      this.balance -= nominalDitarik;
+      let transaksiBaru = new Transaction(nominalDitarik, "debet", note);
+      this.transactions.push(transaksiBaru);
+      console.log("Anda sukses menarik uang dari bank");
+    }
+  }
+
+  transfer(akunTujuan, nominalTransfer) {
+    if (this.balance < nominalTransfer) {
+      console.log(`Anda Gagal transfer ke ${akunTujuan.memberName}`);
+    } else if (this.balance - nominalTransfer < this.minimumBalace) {
+      console.log(`Anda Gagal transfer ke ${akunTujuan.memberName} karena saldo minimum tidak terpenuhi`);
+    } else {
+      this.balance-=nominalTransfer;
+      akunTujuan.balance+=nominalTransfer;
+      let transaksiPengirim = new Transaction(nominalTransfer, "debet", `trasnfer ke akun ${akunTujuan.memberName}`);
+      let transaksiPenerima = new Transaction(nominalTransfer, "credit", `transfer dari akun ${this.memberName}`);
+
+      this.transactions.push(transaksiPengirim);
+      akunTujuan.transactions.push(transaksiPenerima);
+      console.log(`Anda sukses transfer ke ${akunTujuan.memberName}`);
+    }
+  }
 }
 
 class Platinum extends Member{
   // Tulis Code Disini
+  constructor(memberName, accountNumber, balance) {
+    super(memberName, accountNumber, 50000, balance);
+    this.type = "platinum";
+  }
 }
 
 class Silver extends Member{
   // Tulis Code Disini
+  constructor(memberName, accountNumber, balance) {
+    super(memberName, accountNumber, 10000, balance);
+    this.type = "silver";
+  }
 }
 
 class Transaction {
   // Tulis Code Disini
+  constructor(nominal, status, note) {
+    this.nominal = nominal;
+    this.status = status;
+    this.date = new Date();
+    this.note = note;
+  }
+
 }
 
 // TESTCASE

@@ -24,8 +24,16 @@ function dijkstra(
   start: string,
   end: string,
 ) {
+  if (!(start in graph)) {
+    throw new Error("Start not valid sir");
+  }
+  if (!(end in graph)) {
+    throw new Error("Target not valid sir");
+  }
+
   const distances: Record<string, number> = {};
   const previous: Record<string, string | null> = {};
+  const visited = new Set();
   const pq = new PriorityQueue();
 
   for (const vtx in graph) {
@@ -39,27 +47,29 @@ function dijkstra(
     previous[vtx] = null;
   }
 
-  if (!Object.keys(distances).find((d) => d == end)) {
-    throw new Error("Target not valid sir");
-  }
-
   while (!pq.isEmpty()) {
-    const curr = pq.dequeue();
+    const currentVertex = pq.dequeue();
 
-    if (curr == end) {
-      return { distances, previous };
-    }
+    if (currentVertex === end) break;
 
-    for (const neighbor in graph[curr]) {
-      const distance = distances[curr] + graph[curr][neighbor];
+    if (visited.has(currentVertex)) continue;
+    visited.add(currentVertex);
+
+    for (const neighbor in graph[currentVertex]) {
+      if (visited.has(neighbor)) continue;
+
+      const distance =
+        distances[currentVertex] + graph[currentVertex][neighbor];
 
       if (distance < distances[neighbor]) {
         distances[neighbor] = distance;
-        previous[neighbor] = curr;
+        previous[neighbor] = currentVertex;
         pq.enqueue(neighbor, distance);
       }
     }
   }
+
+  return { distances, previous };
 }
 
 function getPath(
@@ -72,6 +82,7 @@ function getPath(
 
   while (current !== null) {
     path.unshift(current);
+    if (current === start) break;
     current = previous[current]!;
   }
 

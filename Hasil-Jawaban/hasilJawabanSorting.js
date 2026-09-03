@@ -6,7 +6,16 @@ const groupAnagrams = function(strs) {
   // Implementasi akan datang di sini
   const map = new Map();
   for (const kata of strs) {
-    const key = kata.split("").sort().join("");
+    let key = kata.split("");
+
+    for (let i = 0; i < key.length; i++) {
+      for (let q = 0; q < key.length - 1; q++) {
+        if (key[q] <  key[q + 1]) {
+        [key[q], key[q + 1]] = [key[q + 1], key[q]];
+        }
+      }
+    }
+    key = key.join("");
 
     if (!map.has(key)) {
         map.set(key, []);
